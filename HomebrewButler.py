@@ -2,8 +2,17 @@
 #Prerequisities
 #pip3 install -U rumps
 
+#If the icon is coloured, there are updates available.
+
+#ToDo
+#Notifications not working
+#When launched without Terminal the subprocessed seems to dont work
+#Make the Timer configurable
+
 import rumps
 import subprocess
+
+checkinterval = 1800
 
 class HomebrewButlerApp(rumps.App):
     def __init__(self):
@@ -12,8 +21,8 @@ class HomebrewButlerApp(rumps.App):
         self.check4updates_button = rumps.MenuItem(title="Check for Updates", callback=self.check4updates)
         self.update_all_button = rumps.MenuItem(title="Update all", callback=self.update_all)
         self.menu = [self.check4updates_button, self.update_all_button]
-
-    @rumps.timer(1800)
+ 
+    @rumps.timer(checkinterval)
     def check4updates(self, sender=None):
         #subprocess.run(["ls", "-l"])
         outdated = subprocess.check_output(["brew outdated -v"], shell=True).decode("utf-8")
@@ -34,7 +43,7 @@ class HomebrewButlerApp(rumps.App):
                 rumps.notification(title='HomebrewButler', subtitle='Check for updates', message='No outdated packages.')            
 
     def update_all(self,sender):
-        subprocess.run(["brew", "upgrade"])
+        #subprocess.run(["brew", "upgrade"])
         self.icon = "./media/HomebrewButler_menubar_n.icns"
     
 
