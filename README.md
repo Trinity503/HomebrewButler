@@ -4,4 +4,5 @@ Menubar App for macOS. Searches every 30 min for brew outdated packages. If the 
 
 
 If the brew command is not found, try
+
 sudo ln -s /opt/homebrew/bin/brew /usr/local/bin/brew
