@@ -14,13 +14,20 @@
 import rumps
 import subprocess
 import os
+from pathlib import Path
 
 checkinterval = 1800
 #which_brew = os.popen('which brew').read().rstrip()
+BASE_DIR = Path(__file__).resolve().parent
+
+ICON_NORMAL = BASE_DIR / "media" / "HomebrewButler_menubar_n.icns"
+ICON_UPDATES = BASE_DIR / "media" / "HomebrewButler_menubar_y.icns"
+UPGRADE_SCRIPT = BASE_DIR / "brew_upgrade.sh"
+
 
 class HomebrewButlerApp(rumps.App):
     def __init__(self):
-        super(HomebrewButlerApp, self).__init__("Homebrew Butler", title=None, icon="./media/HomebrewButler_menubar_n.icns")
+        super(HomebrewButlerApp, self).__init__("Homebrew Butler", title=None, icon=str(ICON_NORMAL))
         self.check4updates_button = rumps.MenuItem(title="Check for Updates", callback=self.check4updates)
         self.update_all_button = rumps.MenuItem(title="Update all", callback=self.update_all)
         self.menu = [self.check4updates_button, self.update_all_button]
@@ -34,21 +41,21 @@ class HomebrewButlerApp(rumps.App):
         else:
             notifications = False
         
-        command_update = '/usr/local/bin/brew update'
+        command_update = '/opt/homebrew/bin/brew update'
         os.popen(command_update)
 
-        command_outdated = '/usr/local/bin/brew outdated -v'
+        command_outdated = '/opt/homebrew/bin/brew outdated -v'
         outdated = os.popen(command_outdated).read()
                 
         if len(outdated) > 0:
             print("Outdated: " + outdated)
-            self.icon = "./media/HomebrewButler_menubar_y.icns"
+            self.icon = icon=str(ICON_UPDATES)
             if notifications: # If check was instanced by the menu.  
                 rumps.alert(title="Check for updates finished", message='Outdated packages: ' + outdated)
                 rumps.notification(title='HomebrewButler', subtitle='Check for updates finished', message='Outdated packages: ' + outdated)
         else:
             print("No outdated packages.")
-            self.icon = "./media/HomebrewButler_menubar_n.icns"
+            self.icon = icon=str(ICON_NORMAL)
             if notifications: # If check was instanced by the menu.
                 rumps.alert(title="Check for updates finished", message='No outdated packages.')
                 rumps.notification(title='HomebrewButler', subtitle='Check for updates', message='No outdated packages.')            
@@ -57,9 +64,9 @@ class HomebrewButlerApp(rumps.App):
                 
         #removed 'W' for wait, because this crashed HomebreButler, perhaps because of waiting for ALL Terminals to close.
         #This was the only way that a windows opens, which is required to see if the sudo password is required.
-        subprocess.run(['open', '-a', 'Terminal.app', 'brew_upgrade.sh'])
+        subprocess.run(['open', '-a', 'Terminal.app', UPGRADE_SCRIPT])
 
-        self.icon = "./media/HomebrewButler_menubar_n.icns"
+        self.icon = str(ICON_NORMAL)
 
 
 if __name__ == '__main__':
