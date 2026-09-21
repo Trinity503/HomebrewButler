@@ -12,3 +12,14 @@ pyinstaller \
     --add-data "media:media" \
     --add-data "brew_upgrade.sh:." \
     HomebrewButler.py
+    
+    
+mkdir -p dmg_contents
+cp -R "dist/HomebrewButler.app" dmg_contents/
+
+hdiutil create \
+  -volname "HomebrewButler" \
+  -srcfolder dmg_contents \
+  -ov \
+  -format UDZO \
+  "dist/HomebrewButler.dmg"
